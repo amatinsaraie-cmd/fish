@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سامانه فیش حقوقی - پالیزان گستر پارسیان</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Vazirmatn', sans-serif;
+        }
+        
+        :root {
+            --primary-dark: #1e3a5f;
+            --primary: #2c5282;
+            --primary-light: #3182ce;
+            --secondary: #718096;
+            --accent: #4299e1;
+            --success: #48bb78;
+            --danger: #f56565;
+            --warning: #ed8936;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 50%, #3182ce 100%);
+        }
+        
+        .card-shadow {
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #2c5282 0%, #3182ce 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(44, 82, 130, 0.3);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #c53030 0%, #f56565 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #9b2c2c 0%, #c53030 100%);
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #276749 0%, #48bb78 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-success:hover {
+            background: linear-gradient(135deg, #22543d 0%, #276749 100%);
+            transform: translateY(-2px);
+        }
+        
+        .input-field {
+            transition: all 0.3s ease;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .input-field:focus {
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
+        }
+        
+        .table-row:hover {
+            background-color: #f7fafc;
+        }
+        
+        .payslip-section {
+            border-right: 4px solid #3182ce;
+            background: linear-gradient(90deg, #f7fafc 0%, #ffffff 100%);
+        }
+        
+        .payslip-final {
+            border-right: 4px solid #48bb78;
+            background: linear-gradient(90deg, #f0fff4 0%, #ffffff 100%);
+        }
+        
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .logo-placeholder {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #4a5568;
+        }
+        
+        @media print {
+            .no-print { display: none !important; }
+            .payslip-container { 
+                box-shadow: none !important;
+                border: 1px solid #ccc;
+            }
+        }
+        
+        .number-format {
+            font-feature-settings: "ss01";
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Main App Container -->
+    <div id="app">
+        <!-- Header -->
+        <header class="gradient-bg text-white shadow-lg no-print">
+            <div class="container mx-auto px-4 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="logo-placeholder">
+                            <svg class="w-8 h-8 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 class="text-xl md:text-2xl font-bold">پالیزان گستر پارسیان</h1>
+                            <p class="text-blue-200 text-sm">شرکت تأمین نیروی انسانی</p>
+                        </div>
+                    </div>
+                    <div id="headerNav" class="flex items-center gap-3">
+                        <!-- Dynamic navigation buttons will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main id="mainContent" class="container mx-auto px-4 py-8">
+            <!-- Content will be dynamically loaded here -->
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-gray-800 text-gray-400 py-6 mt-auto no-print">
+            <div class="container mx-auto px-4 text-center">
+                <p class="text-sm">© ۱۴۰۳ - پالیزان گستر پارسیان | سامانه مشاهده فیش حقوقی</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modal Container -->
+    <div id="modalContainer" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
+        <div id="modalContent" class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-fade-in">
+            <!-- Modal content will be inserted here -->
+        </div>
+    </div>
+
+    <script>
+        // ==================== Database Management ====================
+        const DB = {
+            getPayslips: () => JSON.parse(localStorage.getItem('payslips') || '[]'),
+            savePayslips: (data) => localStorage.setItem('payslips', JSON.stringify(data)),
+            
+            addOrUpdatePayslip: (payslip) => {
+                const payslips = DB.getPayslips();
+                const key = `${payslip.nationalId}_${payslip.period}`;
+                const index = payslips.findIndex(p => `${p.nationalId}_${p.period}` === key);
+                
+                if (index !== -1) {
+                    payslips[index] = payslip;
+                } else {
+                    payslips.push(payslip);
+                }
+                DB.savePayslips(payslips);
+            },
+            
+            deletePayslip: (nationalId, period) => {
+                const payslips = DB.getPayslips().filter(
+                    p => !(p.nationalId === nationalId && p.period === period)
+                );
+                DB.savePayslips(payslips);
+            },
+            
+            deleteAllPayslips: () => {
+                localStorage.removeItem('payslips');
+            },
+            
+            getPayslipsByNationalId: (nationalId) => {
+                return DB.getPayslips().filter(p => p.nationalId === nationalId);
+            },
+            
+            getPayslip: (nationalId, period) => {
+                return DB.getPayslips().find(
+                    p => p.nationalId === nationalId && p.period === period
+                );
+            }
+        };
+
+        // ==================== State Management ====================
+        const State = {
+            currentPage: 'home',
+            isAdminLoggedIn: false,
+            filters: {
+                company: '',
+                period: '',
+                nationalId: ''
+            },
+            sortBy: 'period',
+            sortOrder: 'desc'
+        };
+
+        // ==================== Utility Functions ====================
+        const Utils = {
+            formatNumber: (num) => {
+                if (!num || num === '' || num === 0 || num === '0') return null;
+                const n = parseFloat(String(num).replace(/,/g, ''));
+                if (isNaN(n) || n === 0) return null;
+                return n.toLocaleString('fa-IR');
+            },
+            
+            isEmptyOrZero: (value) => {
+                if (value === null || value === undefined || value === '') return true;
+                const num = parseFloat(String(value).replace(/,/g, ''));
+                return isNaN(num) ? false : num === 0;
+            },
+            
+            parseExcelHeader: (header) => {
+                if (!header) return null;
+                const sections = ['مشخصات پرسنلی', 'کارکرد', 'حقوق و مزایا', 'کسورات', 'ردیف نهایی'];
+                for (const section of sections) {
+                    if (header.startsWith(section + ' ')) {
+                        return {
+                            section: section,
+                            title: header.substring(section.length + 1).trim()
+                        };
+                    }
+                }
+                return null;
+            },
+            
+            showToast: (message, type = 'info') => {
+                const colors = {
+                    success: 'bg-green-500',
+                    error: 'bg-red-500',
+                    info: 'bg-blue-500',
+                    warning: 'bg-yellow-500'
+                };
+                
+                const toast = document.createElement('div');
+                toast.className = `fixed top-4 left-1/2 transform -translate-x-1/2 ${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in`;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                
+                setTimeout(() => toast.remove(), 3000);
+            }
+        };
+
+        // ==================== Excel Processing ====================
+        const ExcelProcessor = {
+            processFile: (file) => {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const data = new Uint8Array(e.target.result);
+                            const workbook = XLSX.read(data, { type: 'array' });
+                            const sheetName = workbook.SheetNames[0];
+                            const sheet = workbook.Sheets[sheetName];
+                            const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+                            
+                            if (jsonData.length < 2) {
+                                reject('فایل اکسل خالی یا نامعتبر است.');
+                                return;
+                            }
+                            
+                            const headers = jsonData[0];
+                            const payslips = [];
+                            
+                            for (let i = 1; i < jsonData.length; i++) {
+                                const row = jsonData[i];
+                                if (!row || row.length < 6) continue;
+                                
+                                const payslip = {
+                                    company: String(row[0] || '').trim(),
+                                    name: String(row[1] || '').trim(),
+                                    personnelCode: String(row[2] || '').trim(),
+                                    nationalId: String(row[3] || '').trim(),
+                                    period: String(row[4] || '').trim(),
+                                    workRecord: row[5],
+                                    items: []
+                                };
+                                
+                                // Process dynamic columns (from column 7 onwards)
+                                for (let j = 6; j < headers.length; j++) {
+                                    const header = headers[j];
+                                    const value = row[j];
+                                    
+                                    if (!header) continue;
+                                    
+                                    const parsed = Utils.parseExcelHeader(String(header));
+                                    if (parsed && !Utils.isEmptyOrZero(value)) {
+                                        payslip.items.push({
+                                            section: parsed.section,
+                                            title: parsed.title,
+                                            value: value
+                                        });
+                                    }
+                                }
+                                
+                                if (payslip.nationalId && payslip.period) {
+                                    payslips.push(payslip);
+                                }
+                            }
+                            
+                            resolve(payslips);
+                        } catch (error) {
+                            reject('خطا در پردازش فایل اکسل: ' + error.message);
+                        }
+                    };
+                    reader.onerror = () => reject('خطا در خواندن فایل.');
+                    reader.readAsArrayBuffer(file);
+                });
+            }
+        };
+
+        // ==================== Page Renderers ====================
+        const Pages = {
+            // Home Page
+            home: () => {
+                document.getElementById('headerNav').innerHTML = '';
+                return `
+                    <div class="max-w-4xl mx-auto">
+                        <div class="text-center mb-12">
+                            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">سامانه مشاهده فیش حقوقی</h2>
+                            <p class="text-gray-600 text-lg">پالیزان گستر پارسیان – شرکت تأمین نیروی انسانی</p>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <!-- Admin Login Card -->
+                            <div class="bg-white rounded-2xl card-shadow p-8 hover:shadow-xl transition-shadow">
+                                <div class="text-center">
+                                    <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                                        <svg class="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-2xl font-bold text-gray-800 mb-4">ورود مدیر</h3>
+                                    <p class="text-gray-600 mb-6">مدیریت و آپلود فیش‌های حقوقی</p>
+                                    <button onclick="navigate('adminLogin')" class="btn-primary w-full py-4 text-white rounded-xl font-semibold text-lg">
+                                        ورود به پنل مدیریت
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Employee Login Card -->
+                            <div class="bg-white rounded-2xl card-shadow p-8 hover:shadow-xl transition-shadow">
+                                <div class="text-center">
+                                    <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                                        <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-2xl font-bold text-gray-800 mb-4">ورود کارکنان</h3>
+                                    <p class="text-gray-600 mb-6">مشاهده فیش حقوقی خود</p>
+                                    <button onclick="navigate('employeeLogin')" class="btn-success w-full py-4 text-white rounded-xl font-semibold text-lg">
+                                        مشاهده فیش حقوقی
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            // Admin Login Page
+            adminLogin: () => {
+                document.getElementById('headerNav').innerHTML = `
+                    <button onclick="navigate('home')" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-colors">
+                        بازگشت
+                    </button>
+                `;
+                return `
+                    <div class="max-w-md mx-auto">
+                        <div class="bg-white rounded-2xl card-shadow p-8">
+                            <div class="text-center mb-8">
+                                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                    </svg>
+                                </div>
+                                <h2 class="text-2xl font-bold text-gray-800">ورود مدیر</h2>
+                                <p class="text-gray-600 mt-2">رمز عبور خود را وارد کنید</p>
+                            </div>
+                            
+                            <form id="adminLoginForm" onsubmit="handleAdminLogin(event)">
+                                <div class="mb-6">
+                                    <label class="block text-gray-700 font-medium mb-2">رمز عبور</label>
+                                    <input type="password" id="adminPassword" 
+                                        class="input-field w-full px-4 py-3 rounded-xl outline-none text-center text-lg tracking-widest"
+                                        placeholder="••••••••" required autofocus>
+                                </div>
+                                <div id="adminLoginError" class="hidden text-red-500 text-center mb-4 bg-red-50 py-2 rounded-lg"></div>
+                                <button type="submit" class="btn-primary w-full py-4 text-white rounded-xl font-semibold text-lg">
+                                    ورود
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                `;
+            },
+
+            // Employee Login Page
+            employeeLogin: () => {
+                document.getElementById('headerNav').innerHTML = `
+                    <button onclick="navigate('home')" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-colors">
+                        بازگشت
+                    </button>
+                `;
+                return `
+                    <div class="max-w-md mx-auto">
+                        <div class="bg-white rounded-2xl card-shadow p-8">
+                            <div class="text-center mb-8">
+                                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                    </svg>
+                                </div>
+                                <h2 class="text-2xl font-bold text-gray-800">ورود کارکنان</h2>
+                                <p class="text-gray-600 mt-2">کد ملی خود را وارد کنید</p>
+                            </div>
+                            
+                            <form id="employeeLoginForm" onsubmit="handleEmployeeLogin(event)">
+                                <div class="mb-6">
+                                    <label class="block text-gray-700 font-medium mb-2">کد ملی</label>
+                                    <input type="text" id="employeeNationalId" 
+                                        class="input-field w-full px-4 py-3 rounded-xl outline-none text-center text-lg tracking-widest"
+                                        placeholder="کد ملی ۱۰ رقمی" required autofocus
+                                        pattern="[0-9]{10}" maxlength="10">
+                                </div>
+                                <div id="employeeLoginError" class="hidden text-red-500 text-center mb-4 bg-red-50 py-2 rounded-lg"></div>
+                                <button type="submit" class="btn-success w-full py-4 text-white rounded-xl font-semibold text-lg">
+                                    مشاهده فیش حقوقی
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                `;
+            },
+
+            // Employee Period Selection
+            employeePeriods: (nationalId) => {
+                const payslips = DB.getPayslipsByNationalId(nationalId);
+                document.getElementById('headerNav').innerHTML = `
+                    <button onclick="navigate('employeeLogin')" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-colors">
+                        بازگشت
+                    </button>
+                `;
+                
+                if (payslips.length === 0) {
+                    return `
+                        <div class="max-w-md mx-auto text-center">
+                            <div class="bg-white rounded-2xl card-shadow p-8">
+                                <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-xl font-bold text-gray-800 mb-2">فیش حقوقی یافت نشد</h3>
+                                <p class="text-gray-600">برای این کد ملی فیش حقوقی ثبت نشده است.</p>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // Sort by period descending
+                payslips.sort((a, b) => b.period.localeCompare(a.period));
+                
+                return `
+                    <div class="max-w-2xl mx-auto">
+                        <div class="bg-white rounded-2xl card-shadow p-8">
+                            <div class="text-center mb-8">
+                                <h2 class="text-2xl font-bold text-gray-800">انتخاب دوره</h2>
+                                <p class="text-gray-600 mt-2">${payslips[0].name} - کد ملی: ${nationalId}</p>
+                            </div>
+                            
+                            <div class="grid gap-3">
+                                ${payslips.map(p => `
+                                    <button onclick="viewPayslip('${p.nationalId}', '${p.period}')" 
+                                        class="flex items-center justify-between bg-gray-50 hover:bg-blue-50 p-4 rounded-xl transition-colors border-2 border-transparent hover:border-blue-200">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                                </svg>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="font-semibold text-gray-800">فیش حقوقی ${p.period}</div>
+                                                <div class="text-sm text-gray-500">${p.company}</div>
+                                            </div>
+                                        </div>
+                                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                                        </svg>
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            // Admin Dashboard
+            adminDashboard: () => {
+                if (!State.isAdminLoggedIn) {
+                    navigate('adminLogin');
+                    return '';
+                }
+                
+                document.getElementById('headerNav').innerHTML = `
+                    <button onclick="handleAdminLogout()" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg transition-colors">
+                        خروج
+                    </button>
+                `;
+                
+                const payslips = DB.getPayslips();
+                const companies = [...new Set(payslips.map(p => p.company))];
+                const periods = [...new Set(payslips.map(p => p.period))].sort().reverse();
+                
+                // Apply filters
+                let filteredPayslips = payslips.filter(p => {
+                    if (State.filters.company && p.company !== State.filters.company) return false;
+                    if (State.filters.period && p.period !== State.filters.period) return false;
+                    if (State.filters.nationalId && !p.nationalId.includes(State.filters.nationalId)) return false;
+                    return true;
+                });
+                
+                // Apply sorting
+                filteredPayslips.sort((a, b) => {
+                    let comparison = 0;
+                    if (State.sortBy === 'company') {
+                        comparison = a.company.localeCompare(b.company, 'fa');
+                    } else if (State.sortBy === 'period') {
+                        comparison = a.period.localeCompare(b.period);
+                    } else if (State.sortBy === 'name') {
+                        comparison = a.name.localeCompare(b.name, 'fa');
+                    }
+                    return State.sortOrder === 'asc' ? comparison : -comparison;
+                });
+                
+                return `
+                    <div class="max-w-7xl mx-auto">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800">پنل مدیریت</h2>
+                            <div class="flex flex-wrap gap-3">
+                                <button onclick="openUploadModal()" class="btn-primary px-6 py-3 text-white rounded-xl font-semibold flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                    </svg>
+                                    آپلود فایل اکسل
+                                </button>
+                                ${payslips.length > 0 ? `
+                                    <button onclick="confirmDeleteAll()" class="btn-danger px-6 py-3 text-white rounded-xl font-semibold flex items-center gap-2">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                        حذف همه فیش‌ها
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                        
+                        <!-- Stats Cards -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                            <div class="bg-white rounded-xl p-4 card-shadow">
+                                <div class="text-3xl font-bold text-blue-600">${payslips.length}</div>
+                                <div class="text-gray-600 text-sm">کل فیش‌ها</div>
+                            </div>
+                            <div class="bg-white rounded-xl p-4 card-shadow">
+                                <div class="text-3xl font-bold text-green-600">${companies.length}</div>
+                                <div class="text-gray-600 text-sm">شرکت‌ها</div>
+                            </div>
+                            <div class="bg-white rounded-xl p-4 card-shadow">
+                                <div class="text-3xl font-bold text-purple-600">${periods.length}</div>
+                                <div class="text-gray-600 text-sm">دوره‌ها</div>
+                            </div>
+                            <div class="bg-white rounded-xl p-4 card-shadow">
+                                <div class="text-3xl font-bold text-orange-600">${[...new Set(payslips.map(p => p.nationalId))].length}</div>
+                                <div class="text-gray-600 text-sm">کارکنان</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Filters -->
+                        <div class="bg-white rounded-xl p-4 card-shadow mb-6">
+                            <div class="flex flex-wrap gap-4 items-end">
+                                <div class="flex-1 min-w-[200px]">
+                                    <label class="block text-gray-700 text-sm font-medium mb-1">نام شرکت</label>
+                                    <select id="filterCompany" onchange="applyFilters()" class="input-field w-full px-3 py-2 rounded-lg outline-none">
+                                        <option value="">همه شرکت‌ها</option>
+                                        ${companies.map(c => `<option value="${c}" ${State.filters.company === c ? 'selected' : ''}>${c}</option>`).join('')}
+                                    </select>
+                                </div>
+                                <div class="flex-1 min-w-[200px]">
+                                    <label class="block text-gray-700 text-sm font-medium mb-1">دوره کارکرد</label>
+                                    <select id="filterPeriod" onchange="applyFilters()" class="input-field w-full px-3 py-2 rounded-lg outline-none">
+                                        <option value="">همه دوره‌ها</option>
+                                        ${periods.map(p => `<option value="${p}" ${State.filters.period === p ? 'selected' : ''}>${p}</option>`).join('')}
+                                    </select>
+                                </div>
+                                <div class="flex-1 min-w-[200px]">
+                                    <label class="block text-gray-700 text-sm font-medium mb-1">جستجو کد ملی</label>
+                                    <input type="text" id="filterNationalId" onkeyup="applyFilters()" 
+                                        class="input-field w-full px-3 py-2 rounded-lg outline-none" 
+                                        placeholder="کد ملی..." value="${State.filters.nationalId}">
+                                </div>
+                                <div class="flex-1 min-w-[200px]">
+                                    <label class="block text-gray-700 text-sm font-medium mb-1">مرتب‌سازی</label>
+                                    <div class="flex gap-2">
+                                        <select id="sortBy" onchange="applySort()" class="input-field flex-1 px-3 py-2 rounded-lg outline-none">
+                                            <option value="period" ${State.sortBy === 'period' ? 'selected' : ''}>دوره</option>
+                                            <option value="company" ${State.sortBy === 'company' ? 'selected' : ''}>شرکت</option>
+                                            <option value="name" ${State.sortBy === 'name' ? 'selected' : ''}>نام</option>
+                                        </select>
+                                        <button onclick="toggleSortOrder()" class="input-field px-3 py-2 rounded-lg">
+                                            ${State.sortOrder === 'asc' ? '↑' : '↓'}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Payslips Table -->
+                        <div class="bg-white rounded-xl card-shadow overflow-hidden">
+                            ${filteredPayslips.length === 0 ? `
+                                <div class="p-12 text-center text-gray-500">
+                                    <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    <p class="text-lg">هیچ فیش حقوقی یافت نشد</p>
+                                    <p class="text-sm mt-2">فایل اکسل را آپلود کنید</p>
+                                </div>
+                            ` : `
+                                <div class="overflow-x-auto">
+                                    <table class="w-full">
+                                        <thead class="bg-gray-50 border-b">
+                                            <tr>
+                                                <th class="px-4 py-3 text-right text-sm font-semibold text-gray-700">ردیف</th>
+                                                <th class="px-4 py-3 text-right text-sm font-semibold text-gray-700">نام</th>
+                                                <th class="px-4 py-3 text-right text-sm font-semibold text-gray-700">کد ملی</th>
+                                                <th class="px-4 py-3 text-right text-sm font-semibold text-gray-700">کد پرسنلی</th>
+                                                <th class="px-4 py-3 text-right text-sm font-semibold text-gray-700">شرکت</th>
+                                                <th class="px-4 py-3 text-right text-sm font-semibold text-gray-700">دوره</th>
+                                                <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">عملیات</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${filteredPayslips.map((p, i) => `
+                                                <tr class="table-row border-b hover:bg-gray-50 cursor-pointer" onclick="viewPayslip('${p.nationalId}', '${p.period}')">
+                                                    <td class="px-4 py-3 text-gray-600">${i + 1}</td>
+                                                    <td class="px-4 py-3 font-medium text-gray-800">${p.name}</td>
+                                                    <td class="px-4 py-3 text-gray-600 font-mono">${p.nationalId}</td>
+                                                    <td class="px-4 py-3 text-gray-600">${p.personnelCode}</td>
+                                                    <td class="px-4 py-3 text-gray-600">${p.company}</td>
+                                                    <td class="px-4 py-3 text-gray-600">${p.period}</td>
+                                                    <td class="px-4 py-3 text-center" onclick="event.stopPropagation()">
+                                                        <button onclick="confirmDelete('${p.nationalId}', '${p.period}')" 
+                                                            class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-colors"
+                                                            title="حذف">
+                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                            </svg>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            `).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                `;
+            }
+        };
+
+        // ==================== Payslip Renderer ====================
+        function renderPayslip(payslip) {
+            const getSectionItems = (section) => {
+                return payslip.items.filter(item => item.section === section && !Utils.isEmptyOrZero(item.value));
+            };
+            
+            const renderSectionItems = (items) => {
+                return items.map(item => `
+                    <div class="flex justify-between py-2 border-b border-gray-100 last:border-0">
+                        <span class="text-gray-600">${item.title}</span>
+                        <span class="font-semibold text-gray-800 number-format">${Utils.formatNumber(item.value) || item.value}</span>
+                    </div>
+                `).join('');
+            };
+            
+            const personnelInfo = getSectionItems('مشخصات پرسنلی');
+            const workRecord = getSectionItems('کارکرد');
+            const salaryBenefits = getSectionItems('حقوق و مزایا');
+            const deductions = getSectionItems('کسورات');
+            const finalRow = getSectionItems('ردیف نهایی');
+            
+            return `
+                <div class="payslip-container bg-white rounded-2xl card-shadow overflow-hidden max-w-3xl mx-auto">
+                    <!-- Header -->
+                    <div class="gradient-bg text-white p-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="logo-placeholder bg-white/20">
+                                    <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h2 class="text-xl font-bold">${payslip.company}</h2>
+                                    <p class="text-blue-200 text-sm">شرکت تأمین نیروی انسانی</p>
+                                </div>
+                            </div>
+                            <div class="text-left">
+                                <div class="text-2xl font-bold">فیش حقوقی</div>
+                                <div class="text-blue-200">دوره: ${payslip.period}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6 space-y-6">
+                        <!-- Basic Personnel Info -->
+                        <div class="payslip-section rounded-xl p-4">
+                            <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
+                                مشخصات پرسنلی
+                            </h3>
+                            <div class="grid md:grid-cols-3 gap-4">
+                                <div class="bg-white rounded-lg p-3">
+                                    <div class="text-gray-500 text-sm">نام و نام خانوادگی</div>
+                                    <div class="font-semibold text-gray-800">${payslip.name}</div>
+                                </div>
+                                <div class="bg-white rounded-lg p-3">
+                                    <div class="text-gray-500 text-sm">کد پرسنلی</div>
+                                    <div class="font-semibold text-gray-800">${payslip.personnelCode}</div>
+                                </div>
+                                <div class="bg-white rounded-lg p-3">
+                                    <div class="text-gray-500 text-sm">کد ملی</div>
+                                    <div class="font-semibold text-gray-800 font-mono">${payslip.nationalId}</div>
+                                </div>
+                            </div>
+                            ${personnelInfo.length > 0 ? `
+                                <div class="mt-4 bg-white rounded-lg p-3">
+                                    ${renderSectionItems(personnelInfo)}
+                                </div>
+                            ` : ''}
+                        </div>
+                        
+                        <!-- Work Record -->
+                        <div class="payslip-section rounded-xl p-4">
+                            <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                کارکرد
+                            </h3>
+                            <div class="bg-white rounded-lg p-3">
+                                ${!Utils.isEmptyOrZero(payslip.workRecord) ? `
+                                    <div class="flex justify-between py-2 border-b border-gray-100">
+                                        <span class="text-gray-600">کارکرد</span>
+                                        <span class="font-semibold text-gray-800">${Utils.formatNumber(payslip.workRecord) || payslip.workRecord}</span>
+                                    </div>
+                                ` : ''}
+                                ${renderSectionItems(workRecord)}
+                            </div>
+                        </div>
+                        
+                        <!-- Salary & Benefits -->
+                        ${salaryBenefits.length > 0 ? `
+                            <div class="payslip-section rounded-xl p-4">
+                                <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    حقوق و مزایا
+                                </h3>
+                                <div class="bg-white rounded-lg p-3">
+                                    ${renderSectionItems(salaryBenefits)}
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        <!-- Deductions -->
+                        ${deductions.length > 0 ? `
+                            <div class="payslip-section rounded-xl p-4 border-r-red-400">
+                                <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    کسورات
+                                </h3>
+                                <div class="bg-white rounded-lg p-3">
+                                    ${renderSectionItems(deductions)}
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        <!-- Final Row -->
+                        ${finalRow.length > 0 ? `
+                            <div class="payslip-final rounded-xl p-4">
+                                <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                    </svg>
+                                    جمع‌بندی نهایی
+                                </h3>
+                                <div class="bg-white rounded-lg p-3">
+                                    ${finalRow.map(item => `
+                                        <div class="flex justify-between py-3 border-b border-gray-100 last:border-0 ${item.title.includes('خالص') ? 'bg-green-50 -mx-3 px-3 rounded-lg' : ''}">
+                                            <span class="font-semibold text-gray-700">${item.title}</span>
+                                            <span class="font-bold ${item.title.includes('خالص') ? 'text-green-600 text-lg' : 'text-gray-800'} number-format">
+                                                ${Utils.formatNumber(item.value) || item.value} ریال
+                                            </span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <!-- Footer -->
+                    <div class="bg-gray-50 px-6 py-4 border-t">
+                        <div class="flex justify-between items-center text-sm text-gray-500">
+                            <span>پالیزان گستر پارسیان</span>
+                            <span>تاریخ صدور: ${new Date().toLocaleDateString('fa-IR')}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==================== Event Handlers ====================
+        function navigate(page, data = null) {
+            State.currentPage = page;
+            const mainContent = document.getElementById('mainContent');
+            
+            if (Pages[page]) {
+                mainContent.innerHTML = Pages[page](data);
+            }
+        }
+
+        function handleAdminLogin(event) {
+            event.preventDefault();
+            const password = document.getElementById('adminPassword').value;
+            const errorDiv = document.getElementById('adminLoginError');
+            
+            // Backend validation (hardcoded password)
+            if (password === '1234') {
+                State.isAdminLoggedIn = true;
+                navigate('adminDashboard');
+                Utils.showToast('ورود موفقیت‌آمیز بود', 'success');
+            } else {
+                errorDiv.textContent = 'رمز عبور اشتباه است.';
+                errorDiv.classList.remove('hidden');
+            }
+        }
+
+        function handleAdminLogout() {
+            State.isAdminLoggedIn = false;
+            navigate('home');
+            Utils.showToast('با موفقیت خارج شدید', 'info');
+        }
+
+        function handleEmployeeLogin(event) {
+            event.preventDefault();
+            const nationalId = document.getElementById('employeeNationalId').value.trim();
+            const errorDiv = document.getElementById('employeeLoginError');
+            
+            const payslips = DB.getPayslipsByNationalId(nationalId);
+            
+            if (payslips.length === 0) {
+                errorDiv.textContent = 'برای این کد ملی فیش حقوقی ثبت نشده است.';
+                errorDiv.classList.remove('hidden');
+            } else if (payslips.length === 1) {
+                viewPayslip(nationalId, payslips[0].period);
+            } else {
+                navigate('employeePeriods', nationalId);
+            }
+        }
+
+        function viewPayslip(nationalId, period) {
+            const payslip = DB.getPayslip(nationalId, period);
+            if (!payslip) {
+                Utils.showToast('فیش یافت نشد', 'error');
+                return;
+            }
+            
+            const modalContainer = document.getElementById('modalContainer');
+            const modalContent = document.getElementById('modalContent');
+            
+            modalContent.innerHTML = `
+                <div class="p-4 no-print">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold text-gray-800">مشاهده فیش حقوقی</h3>
+                        <div class="flex gap-2">
+                            <button onclick="window.print()" class="bg-blue-100 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-200 transition-colors flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                                </svg>
+                                چاپ
+                            </button>
+                            <button onclick="closeModal()" class="bg-gray-100 text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors">
+                                بستن
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                ${renderPayslip(payslip)}
+            `;
+            
+            modalContainer.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('modalContainer').classList.add('hidden');
+        }
+
+        function openUploadModal() {
+            const modalContainer = document.getElementById('modalContainer');
+            const modalContent = document.getElementById('modalContent');
+            
+            modalContent.innerHTML = `
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-gray-800">آپلود فایل اکسل</h3>
+                        <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-blue-400 transition-colors">
+                        <input type="file" id="excelFile" accept=".xls,.xlsx" class="hidden" onchange="handleFileSelect(event)">
+                        <label for="excelFile" class="cursor-pointer">
+                            <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                            </svg>
+                            <p class="text-gray-600 mb-2">فایل اکسل را اینجا رها کنید یا کلیک کنید</p>
+                            <p class="text-gray-400 text-sm">فرمت‌های مجاز: xls, xlsx</p>
+                        </label>
+                    </div>
+                    
+                    <div id="uploadStatus" class="mt-4 hidden">
+                        <div class="flex items-center gap-3 p-4 bg-blue-50 rounded-lg">
+                            <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                            <span class="text-blue-600">در حال پردازش فایل...</span>
+                        </div>
+                    </div>
+                    
+                    <div id="uploadResult" class="mt-4 hidden"></div>
+                    
+                    <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                        <h4 class="font-semibold text-gray-700 mb-2">ساختار فایل اکسل:</h4>
+                        <ul class="text-sm text-gray-600 space-y-1 list-disc list-inside">
+                            <li>ستون ۱: نام شرکت</li>
+                            <li>ستون ۲: نام</li>
+                            <li>ستون ۳: کد پرسنلی</li>
+                            <li>ستون ۴: کد ملی</li>
+                            <li>ستون ۵: سال و ماه کارکرد</li>
+                            <li>ستون ۶: کارکرد</li>
+                            <li>ستون ۷ به بعد: [بخش] [عنوان آیتم]</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+            
+            modalContainer.classList.remove('hidden');
+        }
+
+        async function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const statusDiv = document.getElementById('uploadStatus');
+            const resultDiv = document.getElementById('uploadResult');
+            
+            statusDiv.classList.remove('hidden');
+            resultDiv.classList.add('hidden');
+            
+            try {
+                const payslips = await ExcelProcessor.processFile(file);
+                
+                for (const payslip of payslips) {
+                    DB.addOrUpdatePayslip(payslip);
+                }
+                
+                statusDiv.classList.add('hidden');
+                resultDiv.innerHTML = `
+                    <div class="p-4 bg-green-50 rounded-lg text-green-700">
+                        <div class="flex items-center gap-2 mb-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            <span class="font-semibold">آپلود موفقیت‌آمیز</span>
+                        </div>
+                        <p>تعداد ${payslips.length} فیش حقوقی با موفقیت ثبت شد.</p>
+                    </div>
+                `;
+                resultDiv.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    closeModal();
+                    navigate('adminDashboard');
+                }, 2000);
+                
+            } catch (error) {
+                statusDiv.classList.add('hidden');
+                resultDiv.innerHTML = `
+                    <div class="p-4 bg-red-50 rounded-lg text-red-700">
+                        <div class="flex items-center gap-2 mb-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                            <span class="font-semibold">خطا در آپلود</span>
+                        </div>
+                        <p>${error}</p>
+                    </div>
+                `;
+                resultDiv.classList.remove('hidden');
+            }
+        }
+
+        function applyFilters() {
+            State.filters.company = document.getElementById('filterCompany').value;
+            State.filters.period = document.getElementById('filterPeriod').value;
+            State.filters.nationalId = document.getElementById('filterNationalId').value;
+            navigate('adminDashboard');
+        }
+
+        function applySort() {
+            State.sortBy = document.getElementById('sortBy').value;
+            navigate('adminDashboard');
+        }
+
+        function toggleSortOrder() {
+            State.sortOrder = State.sortOrder === 'asc' ? 'desc' : 'asc';
+            navigate('adminDashboard');
+        }
+
+        function confirmDelete(nationalId, period) {
+            const modalContainer = document.getElementById('modalContainer');
+            const modalContent = document.getElementById('modalContent');
+            
+            modalContent.innerHTML = `
+                <div class="p-6 text-center">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">حذف فیش حقوقی</h3>
+                    <p class="text-gray-600 mb-6">آیا از حذف این فیش حقوقی اطمینان دارید؟</p>
+                    <div class="flex gap-3 justify-center">
+                        <button onclick="deletePayslip('${nationalId}', '${period}')" class="btn-danger px-6 py-3 text-white rounded-xl font-semibold">
+                            بله، حذف شود
+                        </button>
+                        <button onclick="closeModal()" class="bg-gray-200 px-6 py-3 rounded-xl font-semibold text-gray-700 hover:bg-gray-300 transition-colors">
+                            انصراف
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            modalContainer.classList.remove('hidden');
+        }
+
+        function deletePayslip(nationalId, period) {
+            DB.deletePayslip(nationalId, period);
+            closeModal();
+            navigate('adminDashboard');
+            Utils.showToast('فیش حقوقی با موفقیت حذف شد', 'success');
+        }
+
+        function confirmDeleteAll() {
+            const modalContainer = document.getElementById('modalContainer');
+            const modalContent = document.getElementById('modalContent');
+            const count = DB.getPayslips().length;
+            
+            modalContent.innerHTML = `
+                <div class="p-6 text-center">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">حذف همه فیش‌ها</h3>
+                    <p class="text-gray-600 mb-2">آیا از حذف <strong class="text-red-600">${count}</strong> فیش حقوقی اطمینان دارید؟</p>
+                    <p class="text-red-500 text-sm mb-6">این عملیات قابل بازگشت نیست!</p>
+                    <div class="flex gap-3 justify-center">
+                        <button onclick="deleteAllPayslips()" class="btn-danger px-6 py-3 text-white rounded-xl font-semibold">
+                            بله، همه حذف شوند
+                        </button>
+                        <button onclick="closeModal()" class="bg-gray-200 px-6 py-3 rounded-xl font-semibold text-gray-700 hover:bg-gray-300 transition-colors">
+                            انصراف
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            modalContainer.classList.remove('hidden');
+        }
+
+        function deleteAllPayslips() {
+            DB.deleteAllPayslips();
+            closeModal();
+            navigate('adminDashboard');
+            Utils.showToast('همه فیش‌ها با موفقیت حذف شدند', 'success');
+        }
+
+        // Close modal on outside click
+        document.getElementById('modalContainer').addEventListener('click', (e) => {
+            if (e.target.id === 'modalContainer') {
+                closeModal();
+            }
+        });
+
+        // Initialize app
+        navigate('home');
+    </script>
+</body>
+</html>
